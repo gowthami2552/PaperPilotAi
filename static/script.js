@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /* ════════════════════════════════════════════════════════════ */
 /* RESEARCH-THEMED INTERACTIVE 3D WEBGL ENGINE (THREE.JS)    */
 /* ════════════════════════════════════════════════════════════ */
-let scene, camera, renderer, particlesMesh, dnaGroup, moleculeGroup, docsGroup;
+let scene, camera, renderer, particlesMesh, booksGroup, laptopsGroup, docsGroup;
 let mouseX = 0, mouseY = 0;
 let targetX = 0, targetY = 0;
 
@@ -37,78 +37,133 @@ function init3DScene() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // 3. Create 3D Research Element A: Glowing DNA Double Helix Strand
-    dnaGroup = new THREE.Group();
-    const dnaLength = 32;
-    const sphereGeo = new THREE.SphereGeometry(0.45, 16, 16);
-    const mat1 = new THREE.MeshBasicMaterial({ color: 0x4f46e5 }); // Indigo Strand
-    const mat2 = new THREE.MeshBasicMaterial({ color: 0xec4899 }); // Pink Strand
-    const lineMat = new THREE.LineBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.45 });
+    // 3. Helper: Create 3D Book Model
+    function create3DBook(coverColorHex) {
+        const book = new THREE.Group();
+        // Book Cover
+        const coverGeo = new THREE.BoxGeometry(3.2, 4.2, 0.6);
+        const coverMat = new THREE.MeshBasicMaterial({ color: coverColorHex, transparent: true, opacity: 0.85 });
+        const cover = new THREE.Mesh(coverGeo, coverMat);
+        book.add(cover);
 
-    for (let i = 0; i < dnaLength; i++) {
-        const y = (i - dnaLength / 2) * 1.25;
-        const angle = i * 0.35;
-        const r = 4.2;
+        // Inner Paper Block
+        const paperGeo = new THREE.BoxGeometry(3.0, 4.0, 0.5);
+        const paperMat = new THREE.MeshBasicMaterial({ color: 0xf1f5f9, transparent: true, opacity: 0.9 });
+        const paper = new THREE.Mesh(paperGeo, paperMat);
+        paper.position.x = 0.08;
+        book.add(paper);
 
-        const x1 = Math.cos(angle) * r;
-        const z1 = Math.sin(angle) * r;
-        const s1 = new THREE.Mesh(sphereGeo, mat1);
-        s1.position.set(x1, y, z1);
-        dnaGroup.add(s1);
+        // Glowing Edges
+        const edges = new THREE.EdgesGeometry(coverGeo);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.8 });
+        book.add(new THREE.LineSegments(edges, lineMat));
 
-        const x2 = Math.cos(angle + Math.PI) * r;
-        const z2 = Math.sin(angle + Math.PI) * r;
-        const s2 = new THREE.Mesh(sphereGeo, mat2);
-        s2.position.set(x2, y, z2);
-        dnaGroup.add(s2);
-
-        // Base pair hydrogen bond connector line
-        const lineGeo = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(x1, y, z1),
-            new THREE.Vector3(x2, y, z2)
-        ]);
-        const line = new THREE.Line(lineGeo, lineMat);
-        dnaGroup.add(line);
+        return book;
     }
-    dnaGroup.position.set(28, 0, -15);
-    dnaGroup.rotation.z = 0.35;
-    scene.add(dnaGroup);
 
-    // 4. Create 3D Research Element B: Molecular Chemical Bonding Ring
-    moleculeGroup = new THREE.Group();
-    const atomGeo = new THREE.SphereGeometry(0.65, 16, 16);
-    const atomMat = new THREE.MeshBasicMaterial({ color: 0x10b981, wireframe: true });
-    
-    // Benzene-style 6-atom ring structure
-    const ringRadius = 4.5;
-    const ringPoints = [];
-    for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2;
-        const x = Math.cos(a) * ringRadius;
-        const y = Math.sin(a) * ringRadius;
-        ringPoints.push(new THREE.Vector3(x, y, 0));
+    // 4. Helper: Create 3D Laptop Model
+    function create3DLaptop() {
+        const laptop = new THREE.Group();
 
-        const atom = new THREE.Mesh(atomGeo, atomMat);
-        atom.position.set(x, y, 0);
-        moleculeGroup.add(atom);
+        // Base / Keyboard Deck
+        const baseGeo = new THREE.BoxGeometry(5.2, 0.22, 3.6);
+        const baseMat = new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.85 });
+        const baseMesh = new THREE.Mesh(baseGeo, baseMat);
+        laptop.add(baseMesh);
+
+        // Base Outlines
+        const baseEdges = new THREE.EdgesGeometry(baseGeo);
+        laptop.add(new THREE.LineSegments(baseEdges, new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.8 })));
+
+        // Trackpad
+        const padGeo = new THREE.BoxGeometry(1.4, 0.04, 1.0);
+        const padMesh = new THREE.Mesh(padGeo, new THREE.MeshBasicMaterial({ color: 0x334155 }));
+        padMesh.position.set(0, 0.12, 1.0);
+        laptop.add(padMesh);
+
+        // Display Lid Assembly (angled backward at hinge)
+        const lidGroup = new THREE.Group();
+        lidGroup.position.set(0, 0.1, -1.8);
+
+        const screenDeckGeo = new THREE.BoxGeometry(5.2, 3.4, 0.16);
+        const screenDeckMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, transparent: true, opacity: 0.9 });
+        const screenDeck = new THREE.Mesh(screenDeckGeo, screenDeckMat);
+        screenDeck.position.set(0, 1.7, 0);
+        lidGroup.add(screenDeck);
+
+        // Glowing Screen
+        const displayGeo = new THREE.PlaneGeometry(4.8, 3.0);
+        const displayMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
+        const display = new THREE.Mesh(displayGeo, displayMat);
+        display.position.set(0, 1.7, 0.09);
+        lidGroup.add(display);
+
+        // Code/Document Text Lines on Display
+        for (let lineY = 2.8; lineY >= 0.6; lineY -= 0.5) {
+            const linePts = [
+                new THREE.Vector3(-2.1, lineY, 0.1),
+                new THREE.Vector3(-2.1 + (Math.random() * 2.5 + 1.2), lineY, 0.1)
+            ];
+            const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
+            lidGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: (lineY > 2.0 ? 0xf43f5e : 0xa78bfa), transparent: true, opacity: 0.7 })));
+        }
+
+        // Screen Edges
+        const lidEdges = new THREE.EdgesGeometry(screenDeckGeo);
+        const lidLineMesh = new THREE.LineSegments(lidEdges, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8 }));
+        lidLineMesh.position.set(0, 1.7, 0);
+        lidGroup.add(lidLineMesh);
+
+        lidGroup.rotation.x = -0.3; // Open lid angle
+
+        laptop.add(lidGroup);
+        return laptop;
     }
-    ringPoints.push(ringPoints[0]); // Close ring loop
-    const ringLineGeo = new THREE.BufferGeometry().setFromPoints(ringPoints);
-    const ringLine = new THREE.Line(ringLineGeo, new THREE.LineBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.6 }));
-    moleculeGroup.add(ringLine);
 
-    moleculeGroup.position.set(-26, 8, -12);
-    scene.add(moleculeGroup);
+    // 5. Build Floating 3D Books Collection
+    booksGroup = new THREE.Group();
+    const bookColors = [0x4f46e5, 0xec4899, 0x10b981, 0x8b5cf6];
+    const bookPositions = [
+        { x: 26, y: 5, z: -12, rotX: 0.4, rotY: 0.6 },
+        { x: -26, y: -6, z: -15, rotX: -0.3, rotY: 0.5 },
+        { x: 20, y: -14, z: -18, rotX: 0.5, rotY: -0.4 },
+        { x: -20, y: 14, z: -10, rotX: -0.2, rotY: -0.6 }
+    ];
 
-    // 5. Create 3D Research Element C: Floating Manuscript Files / Document Sheets
+    bookPositions.forEach((pos, i) => {
+        const b = create3DBook(bookColors[i % bookColors.length]);
+        b.position.set(pos.x, pos.y, pos.z);
+        b.rotation.set(pos.rotX, pos.rotY, 0);
+        b.userData = { initialY: pos.y, speed: 0.012 + i * 0.002 };
+        booksGroup.add(b);
+    });
+    scene.add(booksGroup);
+
+    // 6. Build Floating 3D Laptops Collection
+    laptopsGroup = new THREE.Group();
+    const laptopPositions = [
+        { x: 28, y: -3, z: -14, rotX: 0.3, rotY: -0.5 },
+        { x: -25, y: 3, z: -16, rotX: -0.2, rotY: 0.4 }
+    ];
+
+    laptopPositions.forEach((pos, i) => {
+        const lap = create3DLaptop();
+        lap.position.set(pos.x, pos.y, pos.z);
+        lap.rotation.set(pos.rotX, pos.rotY, 0);
+        lap.userData = { initialY: pos.y, speed: 0.01 + i * 0.003 };
+        laptopsGroup.add(lap);
+    });
+    scene.add(laptopsGroup);
+
+    // 7. Create 3D Floating Manuscript Files / Document Sheets
     docsGroup = new THREE.Group();
     const docSheetGeo = new THREE.PlaneGeometry(3.6, 4.8);
     const docPositions = [
         { x: -18, y: -10, z: -5, rotX: 0.2, rotY: 0.4 },
-        { x: 18, y: 12, z: -8, rotX: -0.3, rotY: -0.2 },
-        { x: -12, y: 14, z: -14, rotX: 0.1, rotY: -0.5 },
-        { x: 22, y: -12, z: -10, rotX: -0.2, rotY: 0.3 },
-        { x: -24, y: -8, z: -18, rotX: 0.4, rotY: 0.1 }
+        { x: 14, y: 12, z: -8, rotX: -0.3, rotY: -0.2 },
+        { x: -10, y: 14, z: -14, rotX: 0.1, rotY: -0.5 },
+        { x: 16, y: -12, z: -10, rotX: -0.2, rotY: 0.3 },
+        { x: -16, y: -8, z: -18, rotX: 0.4, rotY: 0.1 }
     ];
 
     docPositions.forEach((pos, idx) => {
@@ -124,13 +179,13 @@ function init3DScene() {
         const docMesh = new THREE.Mesh(docSheetGeo, docMat);
         singleDoc.add(docMesh);
 
-        // Glowing Blue/Indigo Page Border
+        // Glowing Page Border
         const edges = new THREE.EdgesGeometry(docSheetGeo);
         const lineMat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.8 });
         const border = new THREE.LineSegments(edges, lineMat);
         singleDoc.add(border);
 
-        // Simulated Manuscript Text Wireframe Lines inside Page
+        // Manuscript Text Wireframe Lines inside Page
         for (let lineY = 1.6; lineY >= -1.8; lineY -= 0.6) {
             const lineWidth = (lineY === 1.6) ? 1.8 : ((Math.random() > 0.3) ? 2.6 : 1.6);
             const linePts = [
@@ -153,7 +208,7 @@ function init3DScene() {
     });
     scene.add(docsGroup);
 
-    // 6. Create 3D Research Element D: Floating Citation & Data Particles
+    // 8. Create 3D Floating Citation & Data Particles
     const particlesCount = 850;
     const posArray = new Float32Array(particlesCount * 3);
 
@@ -177,7 +232,7 @@ function init3DScene() {
     particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particlesMesh);
 
-    // 7. Mouse Parallax Listeners
+    // 9. Mouse Parallax Listeners
     document.addEventListener('mousemove', (e) => {
         mouseX = (e.clientX - window.innerWidth / 2);
         mouseY = (e.clientY - window.innerHeight / 2);
@@ -189,7 +244,7 @@ function init3DScene() {
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
-    // 8. 3D Animation Loop
+    // 10. 3D Animation Loop
     let clock = 0;
     function animate3D() {
         requestAnimationFrame(animate3D);
@@ -203,15 +258,22 @@ function init3DScene() {
         camera.position.y += (-targetY * 10 - camera.position.y) * 0.05;
         camera.lookAt(scene.position);
 
-        // Rotate 3D Research Graphics
-        if (dnaGroup) {
-            dnaGroup.rotation.y += 0.012;
-            dnaGroup.rotation.x += 0.0015;
+        // Rotate & Float 3D Books
+        if (booksGroup) {
+            booksGroup.children.forEach((bk, i) => {
+                bk.position.y = bk.userData.initialY + Math.sin(clock + i) * 1.2;
+                bk.rotation.y += 0.008;
+                bk.rotation.x += 0.003;
+            });
         }
 
-        if (moleculeGroup) {
-            moleculeGroup.rotation.x += 0.006;
-            moleculeGroup.rotation.z += 0.004;
+        // Rotate & Float 3D Laptops
+        if (laptopsGroup) {
+            laptopsGroup.children.forEach((lap, i) => {
+                lap.position.y = lap.userData.initialY + Math.cos(clock * 0.8 + i) * 1.4;
+                lap.rotation.y += 0.006;
+                lap.rotation.z += 0.002;
+            });
         }
 
         // Float & Rotate 3D Manuscript File Pages
