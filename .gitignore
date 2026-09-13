@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+instance/
+uploads/*
+!uploads/.gitkeep
+generated/*
+!generated/.gitkeep
+*.db
+*.sqlite
+.vscode/
+.idea/

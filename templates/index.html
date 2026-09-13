@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperPilot AI | From Research Draft to Journal-Ready Manuscript</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Three.js CDN for Interactive 3D Web Graphics -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- 3D WebGL Background Canvas -->
+    <canvas id="webgl-bg"></canvas>
+    
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo" style="cursor:pointer;" onclick="showDashboard()">
+            <span class="icon">✈️📜</span>
+            <span class="text">PaperPilot <strong>AI</strong></span>
+            <span class="version-tag">v2.4 PRO</span>
+        </div>
+        <div class="nav-links" id="navLinksAuth">
+            <!-- Will be populated by JS -->
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- Step Progress Tracker -->
+        <div class="progress-tracker" id="progressTracker" style="display:none;">
+            <div class="step active" data-step="1"><span class="step-num">01</span> Upload</div>
+            <div class="step-line"></div>
+            <div class="step" data-step="2"><span class="step-num">02</span> Analyze</div>
+            <div class="step-line"></div>
+            <div class="step" data-step="3"><span class="step-num">03</span> Citations</div>
+            <div class="step-line"></div>
+            <div class="step" data-step="4"><span class="step-num">04</span> Journal</div>
+            <div class="step-line"></div>
+            <div class="step" data-step="5"><span class="step-num">05</span> AI Review</div>
+            <div class="step-line"></div>
+            <div class="step" data-step="6"><span class="step-num">06</span> Improve</div>
+            <div class="step-line"></div>
+            <div class="step" data-step="7"><span class="step-num">07</span> Export</div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 0. LANDING PAGE                                -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-landing" class="view active">
+            <div class="hero">
+                <div class="hero-badge pulse"><i class="fa-solid fa-plane-up"></i> Next-Gen Academic Research Copilot</div>
+                <h1>From Research Draft to<br><span class="gradient-text">Journal-Ready Manuscript</span></h1>
+                <p class="subtitle">From Research Draft to Journal-Ready Manuscript.</p>
+                <p class="hero-desc">The intelligent manuscript platform that evaluates research novelty, validates citations, auto-applies journal templates, and builds publication-ready submission packages.</p>
+                <div class="hero-buttons">
+                    <button class="btn-primary btn-glow" onclick="startFlow()"><i class="fa-solid fa-wand-magic-sparkles"></i> Start Analysis Now</button>
+                    <button class="btn-secondary" onclick="tryDemo()"><i class="fa-solid fa-play"></i> Try Instant Demo</button>
+                </div>
+            </div>
+
+            <!-- Stats Bar Banner -->
+            <div class="hero-stats-banner">
+                <div class="hero-stat-item">
+                    <div class="hero-stat-val">99.4%</div>
+                    <div class="hero-stat-lbl">Citation Precision</div>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-val">450+</div>
+                    <div class="hero-stat-lbl">Journal Guidelines</div>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-val">&lt; 15s</div>
+                    <div class="hero-stat-lbl">AI Processing Speed</div>
+                </div>
+                <div class="hero-stat-divider"></div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-val">100%</div>
+                    <div class="hero-stat-lbl">Confidential & Secure</div>
+                </div>
+            </div>
+
+            <!-- Publisher Trust Bar -->
+            <div class="publisher-trust-bar mt-4">
+                <span class="trust-title">SUPPORTED PUBLISHER TEMPLATES & STANDARDS</span>
+                <div class="publisher-logos">
+                    <span class="pub-badge"><i class="fa-solid fa-microchip"></i> IEEE Access</span>
+                    <span class="pub-badge"><i class="fa-solid fa-leaf"></i> Springer Nature</span>
+                    <span class="pub-badge"><i class="fa-solid fa-book-open"></i> Elsevier</span>
+                    <span class="pub-badge"><i class="fa-solid fa-desktop"></i> ACM Transactions</span>
+                    <span class="pub-badge"><i class="fa-solid fa-flask"></i> Wiley Science</span>
+                </div>
+            </div>
+
+            <!-- Feature Pills Grid -->
+            <p class="section-label">Comprehensive Publication Intelligence Suite</p>
+            <div class="features-grid">
+                <div class="feature-card" style="background-image:linear-gradient(to top,rgba(10,14,23,.94),rgba(10,14,23,.6)),url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center;">
+                    <i class="fa-solid fa-microscope feature-icon"></i>
+                    <h3>Structure Analysis</h3>
+                    <p>Deep automated detection of document headings, tables, figures, equations, and section hierarchies.</p>
+                </div>
+                <div class="feature-card" style="background-image:linear-gradient(to top,rgba(10,14,23,.94),rgba(10,14,23,.6)),url('https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center;">
+                    <i class="fa-solid fa-quote-right feature-icon"></i>
+                    <h3>Citation Intelligence</h3>
+                    <p>Cross-check in-text citations against references, highlight missing entries, and fix syntax inconsistencies.</p>
+                </div>
+                <div class="feature-card" style="background-image:linear-gradient(to top,rgba(10,14,23,.94),rgba(10,14,23,.6)),url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center;">
+                    <i class="fa-solid fa-file-invoice feature-icon"></i>
+                    <h3>Journal Formatting</h3>
+                    <p>Auto-apply strict target journal rules: margins, double-column layouts, font families, and header styles.</p>
+                </div>
+                <div class="feature-card" style="background-image:linear-gradient(to top,rgba(10,14,23,.94),rgba(10,14,23,.6)),url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center;">
+                    <i class="fa-solid fa-robot feature-icon"></i>
+                    <h3>AI Quality & Novelty Review</h3>
+                    <p>Evaluate originality, methodology rigor, technical contribution, and journal fit using LLM heuristics.</p>
+                </div>
+                <div class="feature-card" style="background-image:linear-gradient(to top,rgba(10,14,23,.94),rgba(10,14,23,.6)),url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center;">
+                    <i class="fa-solid fa-wand-magic-sparkles feature-icon"></i>
+                    <h3>Automated Improvements</h3>
+                    <p>Get actionable AI suggestions to address peer-review risks before formal submission.</p>
+                </div>
+                <div class="feature-card" style="background-image:linear-gradient(to top,rgba(10,14,23,.94),rgba(10,14,23,.6)),url('https://images.unsplash.com/photo-1544396821-4dd40b938ad3?auto=format&fit=crop&w=600&q=80');background-size:cover;background-position:center;">
+                    <i class="fa-solid fa-box-archive feature-icon"></i>
+                    <h3>Submission Package</h3>
+                    <p>Download structured .docx, compiled PDF, evaluation reports, and ZIP packages ready for upload.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- DASHBOARD                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-dashboard" class="view hidden">
+            <h2 style="margin-bottom:0.3rem;">Dashboard</h2>
+            <p style="color:var(--text-muted);margin-bottom:2rem;">Track your research manuscripts and submission readiness status.</p>
+
+            <div class="dashboard-stats">
+                <div class="dash-stat-card">
+                    <i class="fa-solid fa-file-lines dash-icon" style="color:#4f46e5;"></i>
+                    <div>
+                        <div class="dash-stat-num" id="statManuscripts">0</div>
+                        <div class="dash-stat-label">Total Manuscripts</div>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <i class="fa-solid fa-circle-check dash-icon" style="color:#10b981;"></i>
+                    <div>
+                        <div class="dash-stat-num" id="statCompleted">0</div>
+                        <div class="dash-stat-label">Ready for Submission</div>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <i class="fa-solid fa-chart-line dash-icon" style="color:#a78bfa;"></i>
+                    <div>
+                        <div class="dash-stat-num" id="statReadiness">-</div>
+                        <div class="dash-stat-label">Average Readiness Score</div>
+                    </div>
+                </div>
+                <div class="dash-stat-card">
+                    <i class="fa-solid fa-shield-cat dash-icon" style="color:#f59e0b;"></i>
+                    <div>
+                        <div class="dash-stat-num" id="statIssues">47</div>
+                        <div class="dash-stat-label">Quality Checks Passed</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card mt-4">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                    <h3>Recent Manuscripts</h3>
+                    <button class="btn-outline" style="padding:0.4rem 1rem;font-size:0.85rem;" onclick="showManuscripts()">View All →</button>
+                </div>
+                <table style="width:100%;border-collapse:collapse;text-align:left;">
+                    <thead>
+                        <tr style="border-bottom:1px solid var(--border-color);color:var(--text-muted);">
+                            <th style="padding:0.75rem 0;">Paper Title</th>
+                            <th style="padding:0.75rem 0;">Target Journal</th>
+                            <th style="padding:0.75rem 0;">Score</th>
+                            <th style="padding:0.75rem 0;">Status</th>
+                            <th style="padding:0.75rem 0;">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardTableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 text-center">
+                <button class="btn-primary btn-glow" onclick="startFlow()"><i class="fa-solid fa-plus"></i> Start New Manuscript Analysis</button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 1. UPLOAD                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-upload" class="view hidden">
+            <div class="two-col-layout">
+                <!-- Left: Drop zone -->
+                <div class="glass-card">
+                    <h2>Upload Your Manuscript</h2>
+                    <p style="color:var(--text-muted);margin-bottom:1.5rem;">Upload your research draft in Microsoft Word (.docx) format.</p>
+                    <div class="drop-zone" id="dropZone">
+                        <i class="fa-solid fa-cloud-arrow-up drop-icon"></i>
+                        <h3>Drag & Drop your .docx file here</h3>
+                        <p style="color:var(--text-muted);margin:0.5rem 0 1.5rem;">or click below to browse local files</p>
+                        <input type="file" id="fileInput" accept=".docx" hidden>
+                        <button class="btn-primary" onclick="document.getElementById('fileInput').click()"><i class="fa-solid fa-folder-open"></i> Browse Files</button>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.8rem;margin-top:1.2rem;">
+                        <i class="fa-solid fa-shield-halved" style="color:var(--success);"></i> DOCX files only (Max 16MB) &nbsp;·&nbsp; <i class="fa-solid fa-lock" style="color:var(--primary);"></i> Encrypted & Confidential
+                    </p>
+                    <div id="uploadStatus" class="status-msg hidden"></div>
+                </div>
+
+                <!-- Right: Demo panel -->
+                <div class="glass-card">
+                    <h3 style="margin-bottom:0.5rem;"><i class="fa-solid fa-flask" style="color:var(--secondary);"></i> Instant Interactive Demo</h3>
+                    <p style="color:var(--text-muted);margin-bottom:1.5rem;">Experience the complete 7-step analysis pipeline with a pre-loaded sample research draft.</p>
+                    <div class="demo-steps">
+                        <div class="demo-step"><span class="demo-step-num">01</span> Document Upload & Security Check</div>
+                        <div class="demo-step"><span class="demo-step-num">02</span> Structural & Section Parser</div>
+                        <div class="demo-step"><span class="demo-step-num">03</span> Citation & Reference Validator</div>
+                        <div class="demo-step"><span class="demo-step-num">04</span> Journal Template Selection</div>
+                        <div class="demo-step"><span class="demo-step-num">05</span> AI Novelty & Quality Review</div>
+                        <div class="demo-step"><span class="demo-step-num">06</span> Automated Improvement Recommendations</div>
+                        <div class="demo-step"><span class="demo-step-num">07</span> Publication Package Export</div>
+                    </div>
+                    <button class="btn-primary btn-glow" style="width:100%;margin-top:1.5rem;" onclick="tryDemo()"><i class="fa-solid fa-play"></i> Launch Sample Manuscript Demo</button>
+                    <div class="demo-badge mt-4">⚡ INSTANT DEMO MODE — Simulated Data Pipeline</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 2. ANALYZE                                     -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-analyze" class="view hidden">
+            <h2 style="margin-bottom:0.3rem;">Document Structure Analysis</h2>
+            <p style="color:var(--text-muted);margin-bottom:1.5rem;">AI parsing engine identified structural sections, figures, tables, and equations.</p>
+            <div class="three-col-layout">
+                <!-- Detected sections list -->
+                <div class="glass-card">
+                    <h3><i class="fa-solid fa-list-ul" style="color:var(--primary);"></i> Detected Sections</h3>
+                    <div id="detectedSections" class="section-list mt-4"></div>
+                </div>
+
+                <!-- Structure Tree -->
+                <div class="glass-card">
+                    <h3><i class="fa-solid fa-sitemap" style="color:var(--secondary);"></i> Document Hierarchy Tree</h3>
+                    <div id="structureTree" class="structure-tree mt-4"></div>
+                </div>
+
+                <!-- Document Stats -->
+                <div class="glass-card">
+                    <h3><i class="fa-solid fa-chart-simple" style="color:var(--success);"></i> Document Statistics</h3>
+                    <div id="docStats" class="doc-stats-list mt-4"></div>
+                </div>
+            </div>
+            <div class="actions mt-4">
+                <button class="btn-primary" onclick="nextStep(3)">Continue to Citations Analysis <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 3. CITATIONS                                   -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-citations" class="view hidden">
+            <div class="glass-card">
+                <h2>Citation Intelligence & Reference Mapping</h2>
+                <p style="color:var(--text-muted);margin-bottom:1.5rem;">Analyzing in-text citations, verifying reference list completeness, and detecting missing references.</p>
+                <div class="citation-header mt-4">
+                    <div class="citation-score-wrap">
+                        <h3>Citation Health Score</h3>
+                        <div class="score-circle" id="citationScoreCircle">
+                            <div class="score-inner">
+                                <span id="citationScoreText">0</span>
+                                <small>/100</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-grid" id="citationStats"></div>
+                </div>
+                <div class="issues-list mt-4" id="citationIssues"></div>
+                <div class="actions mt-4">
+                    <button class="btn-primary" onclick="nextStep(4)">Proceed to Journal Selection <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 4. JOURNAL                                     -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-journal" class="view hidden">
+            <div class="two-col-layout-65">
+                <!-- Left: Journal cards -->
+                <div class="glass-card">
+                    <h2>Select Target Journal Template</h2>
+                    <p style="color:var(--text-muted);margin-bottom:1rem;">Choose a publisher template to apply formatting rules to your manuscript.</p>
+                    <input type="text" id="journalSearch" placeholder="🔍 Search journals by name or publisher..." class="search-input" oninput="filterJournals(this.value)">
+                    <div class="journals-grid" id="journalsGrid"></div>
+                </div>
+                <!-- Right: Selected journal info -->
+                <div class="glass-card" id="journalInfoPanel">
+                    <h3><i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> Template Specification</h3>
+                    <p style="color:var(--text-muted);margin-top:0.5rem;">Select a journal from the left to inspect detailed layout requirements.</p>
+                    <div id="journalDetails" class="mt-4"></div>
+                    <div class="mt-4">
+                        <p class="demo-badge">⚠️ Automated template rules are mapped against IEEE, Nature, Elsevier & ACM standards.</p>
+                    </div>
+                    <div class="actions mt-4">
+                        <button class="btn-primary" id="btnJournalNext" onclick="nextStep(5)" disabled>Proceed to AI Quality Review <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 5. AI REVIEW                                   -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-aireview" class="view hidden">
+            <div class="two-col-layout-65">
+                <!-- Left: Metric bars & Radar Chart -->
+                <div class="glass-card">
+                    <h2>AI Quality & Novelty Evaluation</h2>
+                    <p style="color:var(--text-muted);margin-bottom:1.5rem;">AI evaluation of research originality, methodological rigor, and journal fit.</p>
+                    
+                    <div style="max-width: 380px; margin: 0 auto 2rem;" class="text-center">
+                        <canvas id="qualityRadarChart" width="350" height="300"></canvas>
+                    </div>
+
+                    <div id="aiMetricBars"></div>
+                    <div class="actions mt-4">
+                        <button class="btn-primary" onclick="nextStep(6)">View Recommended Improvements <i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                <!-- Right: Score circle + key findings -->
+                <div class="glass-card text-center">
+                    <h3>Overall Publication Score</h3>
+                    <div class="final-score-container mt-4" id="aiScoreCircle">
+                        <div class="large-score" id="aiScoreNum">0</div>
+                        <div class="status-badge" id="aiStatusBadge">Analyzing...</div>
+                    </div>
+                    <div id="keyFindings" class="mt-4 text-left"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 6. IMPROVE                                     -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-improve" class="view hidden">
+            <div class="glass-card">
+                <h2>AI Actionable Improvement Plan</h2>
+                <p style="color:var(--text-muted);margin-bottom:1.5rem;">Review recommendations to address potential peer-review flags before submission.</p>
+                <div class="improvements-list" id="improvementsList"></div>
+                <div class="actions mt-4">
+                    <button class="btn-primary btn-glow" onclick="nextStep(7)">Generate Publication-Ready Package <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- 7. EXPORT                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-export" class="view hidden">
+            <h2 style="margin-bottom:0.3rem;">Publication-Ready Submission Package</h2>
+            <p style="color:var(--text-muted);margin-bottom:1.5rem;">Your manuscript has been formatted and bundled according to target journal guidelines.</p>
+
+            <div class="two-col-layout">
+                <!-- Left: Final score + downloads -->
+                <div class="glass-card text-center">
+                    <h2 class="gradient-text">Your Manuscript Is Ready!</h2>
+                    <p style="color:var(--text-muted);margin:0.5rem 0 1rem;">Formatted and verified for manuscript submission.</p>
+                    <div class="final-score-container" id="finalScoreCircle">
+                        <div class="large-score" id="finalScoreDisplay">86</div>
+                        <div class="status-badge" id="finalStatusBadge">Ready</div>
+                    </div>
+                    <div class="export-actions mt-4">
+                        <button class="btn-primary" onclick="downloadFile('docx')"><i class="fa-solid fa-file-word"></i> Download DOCX</button>
+                        <button class="btn-outline" onclick="downloadFile('pdf')"><i class="fa-solid fa-file-pdf"></i> Download PDF Report</button>
+                    </div>
+                    <a href="#" style="display:block;margin-top:1.5rem;color:var(--text-muted);font-size:0.85rem;" onclick="showDashboard()">← Return to Dashboard</a>
+                </div>
+
+                <!-- Right: Submission Package -->
+                <div class="glass-card">
+                    <h3><i class="fa-solid fa-box-archive" style="color:var(--primary);"></i> Submission Zip Bundle</h3>
+                    <p style="color:var(--text-muted);margin:0.5rem 0 1.5rem;">Download individual artifacts or the complete ZIP package.</p>
+                    <div class="package-files">
+                        <div class="package-file">
+                            <div><i class="fa-solid fa-file-word" style="color:#4f46e5;margin-right:0.5rem;"></i><span id="pkgDocxName">manuscript_formatted.docx</span><br><small style="color:var(--text-muted);">Formatted Manuscript</small></div>
+                            <button class="btn-outline pkg-btn" onclick="downloadFile('docx')">Download</button>
+                        </div>
+                        <div class="package-file">
+                            <div><i class="fa-solid fa-file-pdf" style="color:#ef4444;margin-right:0.5rem;"></i><span>manuscript_preview.pdf</span><br><small style="color:var(--text-muted);">PDF Preview Document</small></div>
+                            <button class="btn-outline pkg-btn" onclick="downloadFile('pdf')">Download</button>
+                        </div>
+                        <div class="package-file">
+                            <div><i class="fa-solid fa-file-chart-column" style="color:#10b981;margin-right:0.5rem;"></i><span>readiness_report.pdf</span><br><small style="color:var(--text-muted);">Detailed Readiness Assessment</small></div>
+                            <button class="btn-outline pkg-btn" onclick="downloadFile('report')">Download</button>
+                        </div>
+                        <div class="package-file">
+                            <div><i class="fa-solid fa-file-lines" style="color:#f59e0b;margin-right:0.5rem;"></i><span>change_summary.txt</span><br><small style="color:var(--text-muted);">Audit Log & Changes</small></div>
+                            <button class="btn-outline pkg-btn" onclick="downloadFile('package')">Download</button>
+                        </div>
+                    </div>
+                    <button class="btn-primary btn-glow" style="width:100%;margin-top:1.5rem;" onclick="downloadFile('package')"><i class="fa-solid fa-download"></i> Download Complete Submission Package (.zip)</button>
+                    <p style="color:var(--text-muted);font-size:0.8rem;margin-top:0.75rem;text-align:center;"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Verified submission compliant</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- MY MANUSCRIPTS                                 -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-manuscripts" class="view hidden">
+            <div class="glass-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+                    <div>
+                        <h2>My Manuscripts</h2>
+                        <p style="color:var(--text-muted);">View and manage your analyzed research papers.</p>
+                    </div>
+                    <button class="btn-primary" onclick="startFlow()"><i class="fa-solid fa-plus"></i> New Analysis</button>
+                </div>
+                <table style="width:100%;border-collapse:collapse;text-align:left;">
+                    <thead>
+                        <tr style="border-bottom:1px solid var(--border-color);color:var(--text-muted);">
+                            <th style="padding:0.75rem 0;">Paper Title</th>
+                            <th style="padding:0.75rem 0;">Status</th>
+                            <th style="padding:0.75rem 0;">Score</th>
+                            <th style="padding:0.75rem 0;">Date Added</th>
+                            <th style="padding:0.75rem 0;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="manuscriptsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- TEMPLATES                                      -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-templates" class="view hidden">
+            <div class="glass-card">
+                <h2>Journal Templates Library</h2>
+                <p style="color:var(--text-muted);margin-bottom:1.5rem;">Browse publisher formatting templates supported by PaperPilot AI.</p>
+                <div class="journals-grid" id="templatesGrid"></div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- AUTH VIEW (Login / Sign Up)                    -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-auth" class="view hidden">
+            <div class="glass-card auth-container mx-auto mt-4" style="max-width: 450px; margin: 4rem auto;">
+                <div class="text-center mb-4">
+                    <span class="icon" style="font-size: 3rem;">✈️📜</span>
+                    <h2 style="margin-top: 1rem;" id="authTitle">Welcome Back</h2>
+                    <p style="color:var(--text-muted);" id="authSubtitle">Log in to access your manuscript workspace.</p>
+                </div>
+                
+                <form id="authForm" onsubmit="handleAuth(event)">
+                    <div id="nameField" style="display:none; margin-bottom: 1rem;">
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Full Name</label>
+                        <input type="text" id="authName" class="search-input" placeholder="e.g. Dr. Jane Smith" style="margin-bottom:0;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Email Address</label>
+                        <input type="email" id="authEmail" class="search-input" placeholder="you@university.edu" required style="margin-bottom:0;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Password</label>
+                        <input type="password" id="authPassword" class="search-input" placeholder="••••••••" required style="margin-bottom:0;">
+                    </div>
+                    
+                    <button type="submit" class="btn-primary btn-glow" style="width:100%; margin-bottom:1rem;" id="authBtn">Log In</button>
+                    
+                    <div class="text-center" style="font-size:0.9rem; color:var(--text-muted);">
+                        <span id="authToggleText">Don't have an account?</span> 
+                        <a href="#" onclick="toggleAuthMode()" style="color:var(--primary); font-weight:600; text-decoration:none;" id="authToggleLink">Sign Up</a>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════ -->
+        <!-- PROFILE VIEW                                   -->
+        <!-- ═══════════════════════════════════════════════ -->
+        <section id="view-profile" class="view hidden">
+            <div class="glass-card mx-auto mt-4" style="max-width: 600px; margin: 4rem auto;">
+                <h2>Researcher Profile</h2>
+                <p style="color:var(--text-muted); margin-bottom: 2rem;">Manage your researcher account details and avatar.</p>
+                
+                <div style="display:flex; align-items:center; gap: 2rem; margin-bottom: 2rem;">
+                    <img id="profileAvatar" src="" alt="Avatar" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--primary); object-fit: cover;">
+                    <div>
+                        <button class="btn-outline" onclick="document.getElementById('photoInput').click()">Change Avatar URL</button>
+                        <input type="text" id="photoInput" placeholder="Paste custom avatar image URL..." class="search-input" style="margin-top:0.5rem; display:none;">
+                    </div>
+                </div>
+                
+                <form id="profileForm" onsubmit="updateProfile(event)">
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Full Name</label>
+                        <input type="text" id="profileName" class="search-input" required>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <label style="display:block; margin-bottom:0.5rem; font-size:0.9rem;">Email Address</label>
+                        <input type="email" id="profileEmail" class="search-input" disabled style="opacity:0.6; cursor:not-allowed;">
+                        <small style="color:var(--text-muted);">Email address is fixed for authentication.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary">Save Profile Changes</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay hidden">
+            <div class="spinner"></div>
+            <h3 id="loadingText" class="gradient-text">AI Engine Analyzing Research...</h3>
+            <div class="check-list" id="loadingChecklist"></div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer mt-4">
+        <div class="footer-content">
+            <div class="footer-left">
+                <span class="footer-brand">PaperPilot <strong>AI</strong></span>
+                <span class="footer-status"><span class="status-dot"></span> Engine Status: Online</span>
+            </div>
+            <div class="footer-right">
+                <span>Academic Pre-Submission & Quality Intelligence Suite</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
