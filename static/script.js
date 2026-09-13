@@ -120,14 +120,18 @@ function init3DScene() {
         return laptop;
     }
 
-    // 5. Build Floating 3D Books Collection
+    // 5. Build Floating 3D Books Collection (Spread all over viewport)
     booksGroup = new THREE.Group();
-    const bookColors = [0x4f46e5, 0xec4899, 0x10b981, 0x8b5cf6];
+    const bookColors = [0x4f46e5, 0xec4899, 0x10b981, 0x8b5cf6, 0x3b82f6, 0xf59e0b];
     const bookPositions = [
-        { x: 26, y: 5, z: -12, rotX: 0.4, rotY: 0.6 },
-        { x: -26, y: -6, z: -15, rotX: -0.3, rotY: 0.5 },
-        { x: 20, y: -14, z: -18, rotX: 0.5, rotY: -0.4 },
-        { x: -20, y: 14, z: -10, rotX: -0.2, rotY: -0.6 }
+        { x: -38, y: 18, z: -10, rotX: 0.4, rotY: 0.6 },
+        { x: 38, y: 16, z: -12, rotX: -0.3, rotY: 0.5 },
+        { x: -42, y: -16, z: -15, rotX: 0.5, rotY: -0.4 },
+        { x: 40, y: -18, z: -14, rotX: -0.2, rotY: -0.6 },
+        { x: -18, y: 22, z: -20, rotX: 0.3, rotY: -0.3 },
+        { x: 18, y: 20, z: -22, rotX: -0.4, rotY: 0.4 },
+        { x: -22, y: -22, z: -18, rotX: 0.2, rotY: 0.7 },
+        { x: 22, y: -20, z: -16, rotX: -0.5, rotY: -0.2 }
     ];
 
     bookPositions.forEach((pos, i) => {
@@ -139,11 +143,13 @@ function init3DScene() {
     });
     scene.add(booksGroup);
 
-    // 6. Build Floating 3D Laptops Collection
+    // 6. Build Floating 3D Laptops Collection (Spread all over viewport)
     laptopsGroup = new THREE.Group();
     const laptopPositions = [
-        { x: 28, y: -3, z: -14, rotX: 0.3, rotY: -0.5 },
-        { x: -25, y: 3, z: -16, rotX: -0.2, rotY: 0.4 }
+        { x: -35, y: 2, z: -14, rotX: 0.3, rotY: 0.4 },
+        { x: 35, y: -2, z: -15, rotX: -0.2, rotY: -0.5 },
+        { x: -12, y: -20, z: -24, rotX: 0.4, rotY: -0.3 },
+        { x: 12, y: 22, z: -25, rotX: -0.3, rotY: 0.6 }
     ];
 
     laptopPositions.forEach((pos, i) => {
@@ -155,15 +161,20 @@ function init3DScene() {
     });
     scene.add(laptopsGroup);
 
-    // 7. Create 3D Floating Manuscript Files / Document Sheets
+    // 7. Create 3D Floating Manuscript Files / Document Sheets (Spread all over viewport)
     docsGroup = new THREE.Group();
     const docSheetGeo = new THREE.PlaneGeometry(3.6, 4.8);
     const docPositions = [
-        { x: -18, y: -10, z: -5, rotX: 0.2, rotY: 0.4 },
-        { x: 14, y: 12, z: -8, rotX: -0.3, rotY: -0.2 },
-        { x: -10, y: 14, z: -14, rotX: 0.1, rotY: -0.5 },
-        { x: 16, y: -12, z: -10, rotX: -0.2, rotY: 0.3 },
-        { x: -16, y: -8, z: -18, rotX: 0.4, rotY: 0.1 }
+        { x: -45, y: 8, z: -8, rotX: 0.2, rotY: 0.4 },
+        { x: 45, y: -6, z: -10, rotX: -0.3, rotY: -0.2 },
+        { x: -30, y: -22, z: -12, rotX: 0.1, rotY: -0.5 },
+        { x: 30, y: 24, z: -14, rotX: -0.2, rotY: 0.3 },
+        { x: -8, y: 18, z: -16, rotX: 0.4, rotY: 0.1 },
+        { x: 8, y: -18, z: -18, rotX: -0.1, rotY: -0.4 },
+        { x: -28, y: 26, z: -20, rotX: 0.3, rotY: 0.2 },
+        { x: 28, y: -24, z: -22, rotX: -0.4, rotY: -0.3 },
+        { x: -48, y: -12, z: -25, rotX: 0.2, rotY: -0.6 },
+        { x: 48, y: 14, z: -26, rotX: -0.5, rotY: 0.5 }
     ];
 
     docPositions.forEach((pos, idx) => {
@@ -208,14 +219,14 @@ function init3DScene() {
     });
     scene.add(docsGroup);
 
-    // 8. Create 3D Floating Citation & Data Particles
-    const particlesCount = 850;
+    // 8. Create 3D Floating Citation & Data Particles (Wide Viewport Spread)
+    const particlesCount = 1200;
     const posArray = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i += 3) {
-        posArray[i] = (Math.random() - 0.5) * 140;     // X
-        posArray[i + 1] = (Math.random() - 0.5) * 140; // Y
-        posArray[i + 2] = (Math.random() - 0.5) * 140; // Z
+        posArray[i] = (Math.random() - 0.5) * 200;     // X
+        posArray[i + 1] = (Math.random() - 0.5) * 150; // Y
+        posArray[i + 2] = (Math.random() - 0.5) * 150; // Z
     }
 
     const particlesGeometry = new THREE.BufferGeometry();
