@@ -37,84 +37,165 @@ function init3DScene() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // 3. Helper: Create 3D Book Model
+    // 3. Helper: Create Realistic 3D Book Model
     function create3DBook(coverColorHex) {
         const book = new THREE.Group();
-        // Book Cover
-        const coverGeo = new THREE.BoxGeometry(3.2, 4.2, 0.6);
-        const coverMat = new THREE.MeshBasicMaterial({ color: coverColorHex, transparent: true, opacity: 0.85 });
+
+        // 1. Hardcover (Beveled/Extruded Base)
+        const coverGeo = new THREE.BoxGeometry(3.4, 4.4, 0.7);
+        const coverMat = new THREE.MeshBasicMaterial({ color: coverColorHex, transparent: true, opacity: 0.88 });
         const cover = new THREE.Mesh(coverGeo, coverMat);
         book.add(cover);
 
-        // Inner Paper Block
-        const paperGeo = new THREE.BoxGeometry(3.0, 4.0, 0.5);
-        const paperMat = new THREE.MeshBasicMaterial({ color: 0xf1f5f9, transparent: true, opacity: 0.9 });
+        // Cover Gold/Silver Foil Title Plate
+        const plateGeo = new THREE.PlaneGeometry(2.0, 1.2);
+        const plateMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
+        const plate = new THREE.Mesh(plateGeo, plateMat);
+        plate.position.set(0, 0.6, 0.36);
+        book.add(plate);
+
+        // 2. Inner Paper Pages Block
+        const paperGeo = new THREE.BoxGeometry(3.2, 4.2, 0.58);
+        const paperMat = new THREE.MeshBasicMaterial({ color: 0xf8fafc, transparent: true, opacity: 0.95 });
         const paper = new THREE.Mesh(paperGeo, paperMat);
-        paper.position.x = 0.08;
+        paper.position.x = 0.1; // Offset to show spine on left
         book.add(paper);
 
-        // Glowing Edges
+        // Page Texture Lines on exposed paper edges
+        const edgePts = [
+            new THREE.Vector3(1.7, 2.1, 0.25), new THREE.Vector3(1.7, -2.1, 0.25),
+            new THREE.Vector3(1.7, 2.1, -0.25), new THREE.Vector3(1.7, -2.1, -0.25)
+        ];
+        const edgeLineGeo = new THREE.BufferGeometry().setFromPoints(edgePts);
+        book.add(new THREE.Line(edgeLineGeo, new THREE.LineBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.5 })));
+
+        // 3. Silk Ribbon Bookmark
+        const ribbonPts = [
+            new THREE.Vector3(0.2, -2.1, 0.1),
+            new THREE.Vector3(0.4, -2.9, 0.3),
+            new THREE.Vector3(0.2, -3.4, 0.5)
+        ];
+        const ribbonGeo = new THREE.BufferGeometry().setFromPoints(ribbonPts);
+        const ribbonMat = new THREE.LineBasicMaterial({ color: 0xec4899, transparent: true, opacity: 0.9 });
+        book.add(new THREE.Line(ribbonGeo, ribbonMat));
+
+        // 4. Glowing Outlines
         const edges = new THREE.EdgesGeometry(coverGeo);
-        const lineMat = new THREE.LineBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.8 });
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.85 });
         book.add(new THREE.LineSegments(edges, lineMat));
 
         return book;
     }
 
-    // 4. Helper: Create 3D Laptop Model
+    // 4. Helper: Create Realistic 3D Laptop Model (with 3D Keycaps, Keyboard Well, Trackpad & Hinge)
     function create3DLaptop() {
         const laptop = new THREE.Group();
 
-        // Base / Keyboard Deck
-        const baseGeo = new THREE.BoxGeometry(5.2, 0.22, 3.6);
-        const baseMat = new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.85 });
+        // A) Metallic Main Chassis Base Deck
+        const baseGeo = new THREE.BoxGeometry(5.4, 0.22, 3.8);
+        const baseMat = new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.9 });
         const baseMesh = new THREE.Mesh(baseGeo, baseMat);
         laptop.add(baseMesh);
 
         // Base Outlines
         const baseEdges = new THREE.EdgesGeometry(baseGeo);
-        laptop.add(new THREE.LineSegments(baseEdges, new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.8 })));
+        laptop.add(new THREE.LineSegments(baseEdges, new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.85 })));
 
-        // Trackpad
-        const padGeo = new THREE.BoxGeometry(1.4, 0.04, 1.0);
-        const padMesh = new THREE.Mesh(padGeo, new THREE.MeshBasicMaterial({ color: 0x334155 }));
-        padMesh.position.set(0, 0.12, 1.0);
-        laptop.add(padMesh);
+        // B) Sunken Keyboard Well
+        const kbWellGeo = new THREE.BoxGeometry(4.8, 0.05, 2.2);
+        const kbWellMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+        const kbWell = new THREE.Mesh(kbWellGeo, kbWellMat);
+        kbWell.position.set(0, 0.1, -0.4);
+        laptop.add(kbWell);
 
-        // Display Lid Assembly (angled backward at hinge)
-        const lidGroup = new THREE.Group();
-        lidGroup.position.set(0, 0.1, -1.8);
+        // C) REALISTIC KEYBOARD KEYS GRID (5 rows of 12 individual keycaps)
+        const keysGroup = new THREE.Group();
+        const keyGeo = new THREE.BoxGeometry(0.32, 0.08, 0.32);
+        const keyMat = new THREE.MeshBasicMaterial({ color: 0x334155 });
+        const keyEdgeMat = new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.4 });
 
-        const screenDeckGeo = new THREE.BoxGeometry(5.2, 3.4, 0.16);
-        const screenDeckMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, transparent: true, opacity: 0.9 });
-        const screenDeck = new THREE.Mesh(screenDeckGeo, screenDeckMat);
-        screenDeck.position.set(0, 1.7, 0);
-        lidGroup.add(screenDeck);
+        for (let row = 0; row < 5; row++) {
+            for (let col = 0; col < 12; col++) {
+                // Skip middle of bottom row for spacebar
+                if (row === 4 && col >= 4 && col <= 7) continue;
 
-        // Glowing Screen
-        const displayGeo = new THREE.PlaneGeometry(4.8, 3.0);
-        const displayMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
-        const display = new THREE.Mesh(displayGeo, displayMat);
-        display.position.set(0, 1.7, 0.09);
-        lidGroup.add(display);
+                const k = new THREE.Mesh(keyGeo, keyMat);
+                const kx = -2.1 + col * 0.38;
+                const kz = -1.2 + row * 0.4;
+                k.position.set(kx, 0.14, kz);
+                
+                // Key edge outline
+                const kEdge = new THREE.LineSegments(new THREE.EdgesGeometry(keyGeo), keyEdgeMat);
+                k.add(kEdge);
 
-        // Code/Document Text Lines on Display
-        for (let lineY = 2.8; lineY >= 0.6; lineY -= 0.5) {
-            const linePts = [
-                new THREE.Vector3(-2.1, lineY, 0.1),
-                new THREE.Vector3(-2.1 + (Math.random() * 2.5 + 1.2), lineY, 0.1)
-            ];
-            const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
-            lidGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: (lineY > 2.0 ? 0xf43f5e : 0xa78bfa), transparent: true, opacity: 0.7 })));
+                keysGroup.add(k);
+            }
         }
 
-        // Screen Edges
+        // Realistic Spacebar Key
+        const spaceGeo = new THREE.BoxGeometry(1.7, 0.08, 0.32);
+        const spaceBar = new THREE.Mesh(spaceGeo, keyMat);
+        spaceBar.position.set(0, 0.14, 0.4);
+        spaceBar.add(new THREE.LineSegments(new THREE.EdgesGeometry(spaceGeo), keyEdgeMat));
+        keysGroup.add(spaceBar);
+
+        laptop.add(keysGroup);
+
+        // D) Chamfered Glass Trackpad
+        const padGeo = new THREE.BoxGeometry(1.6, 0.04, 1.1);
+        const padMesh = new THREE.Mesh(padGeo, new THREE.MeshBasicMaterial({ color: 0x475569 }));
+        padMesh.position.set(0, 0.12, 1.1);
+        padMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(padGeo), new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 })));
+        laptop.add(padMesh);
+
+        // E) Hinge Bar
+        const hingeGeo = new THREE.CylinderGeometry(0.09, 0.09, 5.0, 16);
+        const hingeMat = new THREE.MeshBasicMaterial({ color: 0x64748b });
+        const hinge = new THREE.Mesh(hingeGeo, hingeMat);
+        hinge.rotation.z = Math.PI / 2;
+        hinge.position.set(0, 0.11, -1.85);
+        laptop.add(hinge);
+
+        // F) Display Lid Assembly
+        const lidGroup = new THREE.Group();
+        lidGroup.position.set(0, 0.11, -1.85);
+
+        const screenDeckGeo = new THREE.BoxGeometry(5.4, 3.6, 0.16);
+        const screenDeckMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, transparent: true, opacity: 0.92 });
+        const screenDeck = new THREE.Mesh(screenDeckGeo, screenDeckMat);
+        screenDeck.position.set(0, 1.8, 0);
+        lidGroup.add(screenDeck);
+
+        // Glowing Screen Panel
+        const displayGeo = new THREE.PlaneGeometry(5.0, 3.2);
+        const displayMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
+        const display = new THREE.Mesh(displayGeo, displayMat);
+        display.position.set(0, 1.8, 0.09);
+        lidGroup.add(display);
+
+        // Code/Editor Text Lines on Screen
+        for (let lineY = 3.0; lineY >= 0.6; lineY -= 0.45) {
+            const linePts = [
+                new THREE.Vector3(-2.2, lineY, 0.1),
+                new THREE.Vector3(-2.2 + (Math.random() * 2.8 + 1.4), lineY, 0.1)
+            ];
+            const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
+            lidGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: (lineY > 2.2 ? 0xf43f5e : (lineY > 1.2 ? 0xa78bfa : 0x34d399)), transparent: true, opacity: 0.75 })));
+        }
+
+        // Top Webcam Dot
+        const camGeo = new THREE.SphereGeometry(0.06, 8, 8);
+        const camMesh = new THREE.Mesh(camGeo, new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+        camMesh.position.set(0, 3.45, 0.09);
+        lidGroup.add(camMesh);
+
+        // Lid Edges
         const lidEdges = new THREE.EdgesGeometry(screenDeckGeo);
-        const lidLineMesh = new THREE.LineSegments(lidEdges, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.8 }));
-        lidLineMesh.position.set(0, 1.7, 0);
+        const lidLineMesh = new THREE.LineSegments(lidEdges, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85 }));
+        lidLineMesh.position.set(0, 1.8, 0);
         lidGroup.add(lidLineMesh);
 
-        lidGroup.rotation.x = -0.3; // Open lid angle
+        lidGroup.rotation.x = -0.32; // Open lid angle
 
         laptop.add(lidGroup);
         return laptop;
@@ -161,7 +242,7 @@ function init3DScene() {
     });
     scene.add(laptopsGroup);
 
-    // 7. Create 3D Floating Manuscript Files / Document Sheets (Spread all over viewport)
+    // 7. Create 3D Floating Manuscript Files / Document Sheets (Stacked Realism Effect)
     docsGroup = new THREE.Group();
     const docSheetGeo = new THREE.PlaneGeometry(3.6, 4.8);
     const docPositions = [
@@ -185,31 +266,37 @@ function init3DScene() {
             color: 0x1e293b,
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.75
+            opacity: 0.82
         });
         const docMesh = new THREE.Mesh(docSheetGeo, docMat);
         singleDoc.add(docMesh);
 
+        // Underneath Offset Shadow Sheet for Stacked Paper Realism
+        const subDocMesh = new THREE.Mesh(docSheetGeo, new THREE.MeshBasicMaterial({ color: 0x0f172a, side: THREE.DoubleSide, transparent: true, opacity: 0.6 }));
+        subDocMesh.position.set(0.12, -0.12, -0.06);
+        singleDoc.add(subDocMesh);
+
         // Glowing Page Border
         const edges = new THREE.EdgesGeometry(docSheetGeo);
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.8 });
+        const lineMat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.85 });
         const border = new THREE.LineSegments(edges, lineMat);
         singleDoc.add(border);
 
-        // Manuscript Text Wireframe Lines inside Page
-        for (let lineY = 1.6; lineY >= -1.8; lineY -= 0.6) {
-            const lineWidth = (lineY === 1.6) ? 1.8 : ((Math.random() > 0.3) ? 2.6 : 1.6);
-            const linePts = [
-                new THREE.Vector3(-1.3, lineY, 0.02),
-                new THREE.Vector3(-1.3 + lineWidth, lineY, 0.02)
-            ];
-            const textLineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
-            const textLineMat = new THREE.LineBasicMaterial({
-                color: (lineY === 1.6) ? 0xec4899 : 0x94a3b8,
-                transparent: true,
-                opacity: 0.7
-            });
-            singleDoc.add(new THREE.Line(textLineGeo, textLineMat));
+        // Two-Column Realistic Manuscript Typography Wireframe
+        // Header Title
+        const titlePts = [new THREE.Vector3(-1.3, 1.8, 0.03), new THREE.Vector3(0.8, 1.8, 0.03)];
+        singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(titlePts), new THREE.LineBasicMaterial({ color: 0xec4899, transparent: true, opacity: 0.9 })));
+
+        // Column 1 Lines
+        for (let lineY = 1.2; lineY >= -1.8; lineY -= 0.4) {
+            const linePts = [new THREE.Vector3(-1.4, lineY, 0.03), new THREE.Vector3(-0.1, lineY, 0.03)];
+            singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(linePts), new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.7 })));
+        }
+
+        // Column 2 Lines
+        for (let lineY = 1.2; lineY >= -1.8; lineY -= 0.4) {
+            const linePts = [new THREE.Vector3(0.1, lineY, 0.03), new THREE.Vector3(1.4, lineY, 0.03)];
+            singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(linePts), new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.7 })));
         }
 
         singleDoc.position.set(pos.x, pos.y, pos.z);
