@@ -47,9 +47,9 @@ function init3DScene() {
         const cover = new THREE.Mesh(coverGeo, coverMat);
         book.add(cover);
 
-        // Cover Gold/Silver Foil Title Plate
+        // Cover Platinum/Silver Foil Title Plate
         const plateGeo = new THREE.PlaneGeometry(2.0, 1.2);
-        const plateMat = new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.7, side: THREE.DoubleSide });
+        const plateMat = new THREE.MeshBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
         const plate = new THREE.Mesh(plateGeo, plateMat);
         plate.position.set(0, 0.6, 0.36);
         book.add(plate);
@@ -67,21 +67,21 @@ function init3DScene() {
             new THREE.Vector3(1.7, 2.1, -0.25), new THREE.Vector3(1.7, -2.1, -0.25)
         ];
         const edgeLineGeo = new THREE.BufferGeometry().setFromPoints(edgePts);
-        book.add(new THREE.Line(edgeLineGeo, new THREE.LineBasicMaterial({ color: 0xc084fc, transparent: true, opacity: 0.5 })));
+        book.add(new THREE.Line(edgeLineGeo, new THREE.LineBasicMaterial({ color: 0xcbd5e1, transparent: true, opacity: 0.6 })));
 
-        // 3. Silk Ribbon Bookmark
+        // 3. Silk Silver Ribbon Bookmark
         const ribbonPts = [
             new THREE.Vector3(0.2, -2.1, 0.1),
             new THREE.Vector3(0.4, -2.9, 0.3),
             new THREE.Vector3(0.2, -3.4, 0.5)
         ];
         const ribbonGeo = new THREE.BufferGeometry().setFromPoints(ribbonPts);
-        const ribbonMat = new THREE.LineBasicMaterial({ color: 0xec4899, transparent: true, opacity: 0.9 });
+        const ribbonMat = new THREE.LineBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.9 });
         book.add(new THREE.Line(ribbonGeo, ribbonMat));
 
-        // 4. Glowing Outlines
+        // 4. Glowing Silver Outlines
         const edges = new THREE.EdgesGeometry(coverGeo);
-        const lineMat = new THREE.LineBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.85 });
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
         book.add(new THREE.LineSegments(edges, lineMat));
 
         return book;
@@ -91,19 +91,19 @@ function init3DScene() {
     function create3DLaptop() {
         const laptop = new THREE.Group();
 
-        // A) Metallic Main Chassis Base Deck
+        // A) Metallic Main Chassis Base Deck (Platinum Silver)
         const baseGeo = new THREE.BoxGeometry(5.4, 0.22, 3.8);
-        const baseMat = new THREE.MeshBasicMaterial({ color: 0x1e293b, transparent: true, opacity: 0.9 });
+        const baseMat = new THREE.MeshBasicMaterial({ color: 0xd1d5db, transparent: true, opacity: 0.9 });
         const baseMesh = new THREE.Mesh(baseGeo, baseMat);
         laptop.add(baseMesh);
 
-        // Base Outlines
+        // Base Outlines (Pure White Silver)
         const baseEdges = new THREE.EdgesGeometry(baseGeo);
-        laptop.add(new THREE.LineSegments(baseEdges, new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.85 })));
+        laptop.add(new THREE.LineSegments(baseEdges, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 })));
 
-        // B) Sunken Keyboard Well
+        // B) Sunken Keyboard Well (Obsidian Black)
         const kbWellGeo = new THREE.BoxGeometry(4.8, 0.05, 2.2);
-        const kbWellMat = new THREE.MeshBasicMaterial({ color: 0x0f172a });
+        const kbWellMat = new THREE.MeshBasicMaterial({ color: 0x18181b });
         const kbWell = new THREE.Mesh(kbWellGeo, kbWellMat);
         kbWell.position.set(0, 0.1, -0.4);
         laptop.add(kbWell);
@@ -111,8 +111,8 @@ function init3DScene() {
         // C) REALISTIC KEYBOARD KEYS GRID (5 rows of 12 individual keycaps)
         const keysGroup = new THREE.Group();
         const keyGeo = new THREE.BoxGeometry(0.32, 0.08, 0.32);
-        const keyMat = new THREE.MeshBasicMaterial({ color: 0x334155 });
-        const keyEdgeMat = new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.4 });
+        const keyMat = new THREE.MeshBasicMaterial({ color: 0x27272a });
+        const keyEdgeMat = new THREE.LineBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.45 });
 
         for (let row = 0; row < 5; row++) {
             for (let col = 0; col < 12; col++) {
@@ -143,14 +143,14 @@ function init3DScene() {
 
         // D) Chamfered Glass Trackpad
         const padGeo = new THREE.BoxGeometry(1.6, 0.04, 1.1);
-        const padMesh = new THREE.Mesh(padGeo, new THREE.MeshBasicMaterial({ color: 0x475569 }));
+        const padMesh = new THREE.Mesh(padGeo, new THREE.MeshBasicMaterial({ color: 0x94a3b8 }));
         padMesh.position.set(0, 0.12, 1.1);
-        padMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(padGeo), new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.6 })));
+        padMesh.add(new THREE.LineSegments(new THREE.EdgesGeometry(padGeo), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.7 })));
         laptop.add(padMesh);
 
         // E) Hinge Bar
         const hingeGeo = new THREE.CylinderGeometry(0.09, 0.09, 5.0, 16);
-        const hingeMat = new THREE.MeshBasicMaterial({ color: 0x64748b });
+        const hingeMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8 });
         const hinge = new THREE.Mesh(hingeGeo, hingeMat);
         hinge.rotation.z = Math.PI / 2;
         hinge.position.set(0, 0.11, -1.85);
@@ -161,37 +161,37 @@ function init3DScene() {
         lidGroup.position.set(0, 0.11, -1.85);
 
         const screenDeckGeo = new THREE.BoxGeometry(5.4, 3.6, 0.16);
-        const screenDeckMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, transparent: true, opacity: 0.92 });
+        const screenDeckMat = new THREE.MeshBasicMaterial({ color: 0x09090b, transparent: true, opacity: 0.95 });
         const screenDeck = new THREE.Mesh(screenDeckGeo, screenDeckMat);
         screenDeck.position.set(0, 1.8, 0);
         lidGroup.add(screenDeck);
 
-        // Glowing Screen Panel
+        // Glowing Silver Screen Panel
         const displayGeo = new THREE.PlaneGeometry(5.0, 3.2);
-        const displayMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
+        const displayMat = new THREE.MeshBasicMaterial({ color: 0xf8fafc, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
         const display = new THREE.Mesh(displayGeo, displayMat);
         display.position.set(0, 1.8, 0.09);
         lidGroup.add(display);
 
-        // Code/Editor Text Lines on Screen
+        // Code/Editor Text Lines on Screen (Silver & White)
         for (let lineY = 3.0; lineY >= 0.6; lineY -= 0.45) {
             const linePts = [
                 new THREE.Vector3(-2.2, lineY, 0.1),
                 new THREE.Vector3(-2.2 + (Math.random() * 2.8 + 1.4), lineY, 0.1)
             ];
             const lineGeo = new THREE.BufferGeometry().setFromPoints(linePts);
-            lidGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: (lineY > 2.2 ? 0xf43f5e : (lineY > 1.2 ? 0xa78bfa : 0x34d399)), transparent: true, opacity: 0.75 })));
+            lidGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xe2e8f0, transparent: true, opacity: 0.85 })));
         }
 
         // Top Webcam Dot
         const camGeo = new THREE.SphereGeometry(0.06, 8, 8);
-        const camMesh = new THREE.Mesh(camGeo, new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+        const camMesh = new THREE.Mesh(camGeo, new THREE.MeshBasicMaterial({ color: 0xffffff }));
         camMesh.position.set(0, 3.45, 0.09);
         lidGroup.add(camMesh);
 
         // Lid Edges
         const lidEdges = new THREE.EdgesGeometry(screenDeckGeo);
-        const lidLineMesh = new THREE.LineSegments(lidEdges, new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.85 }));
+        const lidLineMesh = new THREE.LineSegments(lidEdges, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 }));
         lidLineMesh.position.set(0, 1.8, 0);
         lidGroup.add(lidLineMesh);
 
@@ -203,7 +203,7 @@ function init3DScene() {
 
     // 5. Build Floating 3D Books Collection (Spread all over viewport)
     booksGroup = new THREE.Group();
-    const bookColors = [0x4f46e5, 0xec4899, 0x10b981, 0x8b5cf6, 0x3b82f6, 0xf59e0b];
+    const bookColors = [0x18181b, 0x27272a, 0x3f3f46, 0x94a3b8, 0x52525b, 0x71717a];
     const bookPositions = [
         { x: -38, y: 18, z: -10, rotX: 0.4, rotY: 0.6 },
         { x: 38, y: 16, z: -12, rotX: -0.3, rotY: 0.5 },
@@ -261,42 +261,42 @@ function init3DScene() {
     docPositions.forEach((pos, idx) => {
         const singleDoc = new THREE.Group();
 
-        // 3D Glass Document Page
+        // 3D Glass Document Page (Crisp White/Silver)
         const docMat = new THREE.MeshBasicMaterial({
-            color: 0x1e293b,
+            color: 0xf8fafc,
             side: THREE.DoubleSide,
             transparent: true,
-            opacity: 0.82
+            opacity: 0.85
         });
         const docMesh = new THREE.Mesh(docSheetGeo, docMat);
         singleDoc.add(docMesh);
 
         // Underneath Offset Shadow Sheet for Stacked Paper Realism
-        const subDocMesh = new THREE.Mesh(docSheetGeo, new THREE.MeshBasicMaterial({ color: 0x0f172a, side: THREE.DoubleSide, transparent: true, opacity: 0.6 }));
+        const subDocMesh = new THREE.Mesh(docSheetGeo, new THREE.MeshBasicMaterial({ color: 0x18181b, side: THREE.DoubleSide, transparent: true, opacity: 0.6 }));
         subDocMesh.position.set(0.12, -0.12, -0.06);
         singleDoc.add(subDocMesh);
 
         // Glowing Page Border
         const edges = new THREE.EdgesGeometry(docSheetGeo);
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.85 });
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85 });
         const border = new THREE.LineSegments(edges, lineMat);
         singleDoc.add(border);
 
         // Two-Column Realistic Manuscript Typography Wireframe
-        // Header Title
+        // Header Title (Silver)
         const titlePts = [new THREE.Vector3(-1.3, 1.8, 0.03), new THREE.Vector3(0.8, 1.8, 0.03)];
-        singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(titlePts), new THREE.LineBasicMaterial({ color: 0xec4899, transparent: true, opacity: 0.9 })));
+        singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(titlePts), new THREE.LineBasicMaterial({ color: 0x09090b, transparent: true, opacity: 0.9 })));
 
         // Column 1 Lines
         for (let lineY = 1.2; lineY >= -1.8; lineY -= 0.4) {
             const linePts = [new THREE.Vector3(-1.4, lineY, 0.03), new THREE.Vector3(-0.1, lineY, 0.03)];
-            singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(linePts), new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.7 })));
+            singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(linePts), new THREE.LineBasicMaterial({ color: 0x71717a, transparent: true, opacity: 0.7 })));
         }
 
         // Column 2 Lines
         for (let lineY = 1.2; lineY >= -1.8; lineY -= 0.4) {
             const linePts = [new THREE.Vector3(0.1, lineY, 0.03), new THREE.Vector3(1.4, lineY, 0.03)];
-            singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(linePts), new THREE.LineBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.7 })));
+            singleDoc.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(linePts), new THREE.LineBasicMaterial({ color: 0x71717a, transparent: true, opacity: 0.7 })));
         }
 
         singleDoc.position.set(pos.x, pos.y, pos.z);
@@ -306,7 +306,7 @@ function init3DScene() {
     });
     scene.add(docsGroup);
 
-    // 8. Create 3D Floating Citation & Data Particles (Wide Viewport Spread)
+    // 8. Create 3D Floating Citation & Data Particles (Wide Viewport Spread - White & Silver)
     const particlesCount = 1200;
     const posArray = new Float32Array(particlesCount * 3);
 
@@ -321,9 +321,9 @@ function init3DScene() {
 
     const particlesMaterial = new THREE.PointsMaterial({
         size: 0.38,
-        color: 0x818cf8,
+        color: 0xffffff,
         transparent: true,
-        opacity: 0.55,
+        opacity: 0.65,
         blending: THREE.AdditiveBlending
     });
 
@@ -1001,12 +1001,12 @@ function renderAIReview(data) {
                 datasets: [{
                     label: 'Evaluation Score',
                     data: metrics.map(m => m.val),
-                    backgroundColor: 'rgba(79, 70, 229, 0.25)',
-                    borderColor: '#a78bfa',
-                    pointBackgroundColor: '#ec4899',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#ec4899'
+                    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                    borderColor: '#ffffff',
+                    pointBackgroundColor: '#e2e8f0',
+                    pointBorderColor: '#09090b',
+                    pointHoverBackgroundColor: '#ffffff',
+                    pointHoverBorderColor: '#cbd5e1'
                 }]
             },
             options: {
